@@ -1,0 +1,222 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#ff57ab">
+    <title>Happy Birthday Andile 🎂💖</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'birthday/css/style.css' %}">
+    <style>
+        /* Mobile touch optimization */
+        body {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        button, a, .option-btn, .open-when-btn, .game-btn {
+            -webkit-tap-highlight-color: transparent;
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        input, textarea, select {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+        <div class="floating-hearts">
+            <div class="heart">💗</div>
+            <div class="heart">💕</div>
+            <div class="heart">💖</div>
+            <div class="heart">💗</div>
+            <div class="heart">💕</div>
+            <div class="heart">💖</div>
+            <div class="heart">💗</div>
+            <div class="heart">💕</div>
+        </div>
+        <div class="hero-content fade-in">
+            <div style="margin-bottom: 20px;">
+                <div class="cake">🍰</div>
+                <div style="display: inline-block; margin: 0 20px;">
+                    <div class="candle">
+                        <span class="candle-flame">🔥</span>
+                        🕯️
+                    </div>
+                    <div class="candle" style="margin: 0 10px;">
+                        <span class="candle-flame">🔥</span>
+                        🕯️
+                    </div>
+                    <div class="candle">
+                        <span class="candle-flame">🔥</span>
+                        🕯️
+                    </div>
+                </div>
+                <div class="cake">🍰</div>
+            </div>
+            <h1 class="main-heading">Happy Birthday Andile 🎂💖</h1>
+            <p class="sub-heading">This little corner of the internet is just for you</p>
+            <button class="scroll-btn" onclick="scrollToSection('love-letter')">Start Your Journey ↓</button>
+        </div>
+    </section>
+
+    <!-- Love Letter Section -->
+    <section id="love-letter" class="love-letter-section" {% if background %}style="background-image: url('{{ background.image.url }}'); background-size: cover; background-position: center; background-attachment: fixed;"{% endif %}>
+        <div class="love-letter-overlay"></div>
+        <div class="love-letter-content fade-in-section">
+            <div class="letter-header">
+                <h2>A Letter From My Heart</h2>
+                <button class="pdf-btn" onclick="downloadLetter()" title="Download as PDF">
+                    <span>📥</span> Download Letter
+                </button>
+            </div>
+            <div class="letter-text">
+                <p>My Dearest Andile,</p>
+                
+                <p>From the moment l started taking you serious, everything changed. The world became brighter, my days became filled with laughter, and my heart found its home. You are the most incredible person I have ever known, and I am so grateful for every moment we share together.</p>
+                
+                <p>Your smile lights up my entire world. Your laugh is my favorite sound. Your kindness, your strength, your beautiful spirit – everything about you makes me fall in love with you all over again, every single day.</p>
+                
+                <p>On this special day, I want you to know that you deserve all the happiness in the world. You deserve to be celebrated not just today, but every day. You are loved, you are cherished, and you are appreciated more than words could ever express.</p>
+                
+                <p>Thank you for being you. Thank you for letting me be part of your life. Thank you for every smile, every laugh, every moment of joy.</p>
+                
+                <p>Happy Birthday, my love. Here's to you, to us, and to all the beautiful moments still to come.</p>
+                
+                <p class="signature">Forever yours,<br>With all my love Brian 💗</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz Game Section -->
+    <section id="quiz" class="quiz-section">
+
+
+        <div class="quiz-container fade-in-section">
+            <h2>Let's Play a Game! 🎮</h2>
+            <p class="quiz-intro">How well do you know me? Let's find out!</p>
+            
+            <div id="quiz-content">
+                <div id="question-container">
+                    <h3 id="question-text"></h3>
+                    <div id="options-container"></div>
+                </div>
+                
+                <div id="reaction-container" class="hidden">
+                    <p id="reaction-text"></p>
+                    <button class="next-btn" onclick="nextQuestion()">Next Question →</button>
+                </div>
+                
+                <div id="quiz-complete" class="hidden">
+                    <h3>You completed the quiz! 🎉</h3>
+                    <p class="complete-message">Thank you for playing along, my love! Every answer you give makes me smile. 💗</p>
+                    <button class="continue-btn" onclick="scrollToSection('reveal')">Continue →</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reveal Section -->
+    <section id="reveal" class="reveal-section">
+        <div class="reveal-content fade-in-section">
+            <h2>Before You Go... ✨</h2>
+            <p class="reveal-text">This website isn't just for your birthday...</p>
+            <p class="reveal-text-2">It's a space for smiles, comfort, and games 🤍</p>
+            <p class="reveal-text-3">A place you can come to whenever you need a little love, a laugh, or just a reminder of how special you are to me.</p>
+            <button class="explore-btn" onclick="scrollToSection('open-when')">Explore More →</button>
+        </div>
+    </section>
+
+    <!-- Open When Section -->
+    <section id="open-when" class="open-when-section">
+        <div class="open-when-container fade-in-section">
+            <h2>Open When... 💌</h2>
+            <p class="section-intro">Click any button below when you need it. Each one has a special message just for you.</p>
+            
+            <div class="open-when-buttons" id="open-when-buttons">
+                <!-- Dynamically loaded from database -->
+            </div>
+            
+            <div id="message-modal" class="modal hidden">
+                <div class="modal-content">
+                    <span class="close-btn" onclick="closeMessage()">&times;</span>
+                    <h3 id="message-title"></h3>
+                    <p id="message-text"></p>
+                    <div id="voice-note-player" class="hidden">
+                        <p class="voice-note-label">💝 I recorded a voice note for you:</p>
+                        <audio id="audio-player" controls></audio>
+                        <a id="download-link" class="download-btn" download>Download Voice Note</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mini Games Section -->
+    <section id="mini-games" class="mini-games-section">
+        <div class="mini-games-container fade-in-section">
+            <h2>Fun Little Games 🎪</h2>
+            
+            <!-- Compliment Machine -->
+            <div class="mini-game">
+                <h3>Compliment Machine 💝</h3>
+                <p>Need a pick-me-up? Click the button!</p>
+                <button class="game-btn" onclick="generateCompliment()">Give Me a Compliment</button>
+                <p id="compliment-text" class="game-result"></p>
+            </div>
+            
+            <!-- Heart Meter -->
+            <div class="mini-game">
+                <h3>Love Meter 💖</h3>
+                <p>How much do I love you?</p>
+                <div class="heart-meter">
+                    <div class="heart-fill" id="heart-fill"></div>
+                </div>
+                <button class="game-btn" onclick="fillHeart()">Check Love Level</button>
+                <p id="love-result" class="game-result"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="reassurance">This space is for you. You don't have to answer or click anything. Take it at your own pace. 🤍 and tichange tichiwedzera zvimwe Miss Andile the First so seat tight and keep cheking the website thank you 
+            </p>
+            <p class="copyright">Made By Brian for Andile | 2025</p>
+            <a href="{% url 'admin_portal' %}" class="admin-link">Admin</a>
+        </div>
+    </footer>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="{% static 'birthday/js/script.js' %}"></script>
+    <script>
+        function downloadLetter() {
+            fetch('/download-letter/')
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'Andile_Love_Letter.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                })
+                .catch(error => alert('Error downloading PDF: ' + error));
+        }
+    </script>
+</body>
+</html>

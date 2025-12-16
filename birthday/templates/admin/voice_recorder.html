@@ -1,0 +1,276 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Record Voice Notes - Andile's Birthday{% endblock %}
+
+{% block extrastyle %}
+<style>
+    .voice-recorder {
+        background: linear-gradient(135deg, #ffc1e3 0%, #ff8dc7 100%);
+        padding: 30px;
+        border-radius: 20px;
+        margin: 20px 0;
+        color: white;
+    }
+    
+    .voice-recorder h2 {
+        margin-top: 0;
+        color: white;
+    }
+    
+    .recorder-controls {
+        display: flex;
+        gap: 10px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+    }
+    
+    .btn-record {
+        padding: 12px 24px;
+        background: white;
+        color: #ff57ab;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .btn-record:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .btn-record.recording {
+        background: #ff4d7a;
+        color: white;
+        animation: pulse 1s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    .audio-playback {
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 8px;
+    }
+    
+    audio {
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .message-type-select {
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        font-size: 14px;
+    }
+    
+    .title-input {
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        width: 100%;
+        max-width: 300px;
+        margin: 10px 0;
+        font-size: 14px;
+    }
+    
+    .upload-section {
+        background: rgba(255,255,255,0.1);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+    
+    .info-text {
+        font-size: 14px;
+        opacity: 0.9;
+        margin: 10px 0;
+    }
+    
+    .status {
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+        font-weight: bold;
+    }
+    
+    .status.success {
+        background: #4caf50;
+        color: white;
+    }
+    
+    .status.error {
+        background: #f44336;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="voice-recorder">
+    <h2>🎙️ Record Voice Notes for Andile</h2>
+    <p class="info-text">Record heartfelt messages for each "Open When" category</p>
+    
+    <!-- Record New Voice Note -->
+    <div class="upload-section">
+        <h3 style="color: white; margin-top: 0;">Record a New Message</h3>
+        
+        <div>
+            <label style="display: block; margin-bottom: 10px; font-weight: bold;">Title (optional):</label>
+            <input type="text" id="voiceTitle" class="title-input" placeholder="e.g., Love Message, Encouragement">
+        </div>
+        
+        <div>
+            <label style="display: block; margin-bottom: 10px; font-weight: bold;">Message Type:</label>
+            <select id="messageType" class="message-type-select">
+                <option value="">Select a category...</option>
+                <option value="sad">Open when you're sad 😢</option>
+                <option value="miss">Open when you miss me 💭</option>
+                <option value="happy">Open when you're happy 😊</option>
+                <option value="overwhelmed">Open when you feel overwhelmed 😰</option>
+            </select>
+        </div>
+        
+        <div class="recorder-controls">
+            <button class="btn-record" id="startBtn" onclick="startRecording()">🎤 Start Recording</button>
+            <button class="btn-record" id="stopBtn" onclick="stopRecording()" style="display: none;">⏹️ Stop Recording</button>
+            <button class="btn-record" onclick="clearRecording()" style="background: #ff6b9d;">🔄 Clear</button>
+        </div>
+        
+        <div id="status" class="status" style="display: none;"></div>
+        
+        <div id="audioPlayback" class="audio-playback" style="display: none;">
+            <p style="margin: 0 0 10px 0; font-weight: bold;">Preview:</p>
+            <audio id="audioPreview" controls></audio>
+            <button class="btn-record" onclick="uploadRecording()" style="display: block; margin-top: 10px;">📤 Upload to Admin</button>
+        </div>
+    </div>
+    
+    <p class="info-text" style="margin-top: 30px;">💡 <strong>Tips:</strong></p>
+    <ul style="margin: 10px 0; padding-left: 20px;">
+        <li>Record in a quiet place for best quality</li>
+        <li>Keep messages between 30 seconds and 2 minutes</li>
+        <li>Speak from the heart!</li>
+        <li>You can re-record if you're not happy with it</li>
+    </ul>
+</div>
+
+<script>
+let mediaRecorder;
+let audioChunks = [];
+let recordingStartTime;
+
+async function startRecording() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        
+        mediaRecorder.ondataavailable = (event) => {
+            audioChunks.push(event.data);
+        };
+        
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            
+            document.getElementById('audioPreview').src = audioUrl;
+            document.getElementById('audioPlayback').style.display = 'block';
+            
+            // Store blob for upload
+            window.recordedAudioBlob = audioBlob;
+        };
+        
+        mediaRecorder.start();
+        recordingStartTime = Date.now();
+        
+        document.getElementById('startBtn').style.display = 'none';
+        document.getElementById('stopBtn').style.display = 'block';
+        
+        showStatus('Recording... 🎙️', 'info');
+    } catch (error) {
+        showStatus('Error: Microphone access denied. Please allow microphone access.', 'error');
+        console.error('Error accessing microphone:', error);
+    }
+}
+
+function stopRecording() {
+    if (mediaRecorder) {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        
+        document.getElementById('startBtn').style.display = 'block';
+        document.getElementById('stopBtn').style.display = 'none';
+        
+        showStatus('Recording saved! Preview it below.', 'success');
+    }
+}
+
+function clearRecording() {
+    audioChunks = [];
+    window.recordedAudioBlob = null;
+    document.getElementById('audioPlayback').style.display = 'none';
+    document.getElementById('audioPreview').src = '';
+    document.getElementById('voiceTitle').value = '';
+    showStatus('');
+}
+
+function showStatus(message, type = 'info') {
+    const statusEl = document.getElementById('status');
+    if (message) {
+        statusEl.textContent = message;
+        statusEl.className = 'status ' + type;
+        statusEl.style.display = 'block';
+    } else {
+        statusEl.style.display = 'none';
+    }
+}
+
+function uploadRecording() {
+    const title = document.getElementById('voiceTitle').value || 'Voice Message';
+    const messageType = document.getElementById('messageType').value;
+    
+    if (!messageType) {
+        showStatus('Please select a message type!', 'error');
+        return;
+    }
+    
+    if (!window.recordedAudioBlob) {
+        showStatus('No recording found. Please record first.', 'error');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('message_type', messageType);
+    formData.append('audio_file', window.recordedAudioBlob, 'voice_note.webm');
+    
+    showStatus('Uploading... 📤', 'info');
+    
+    fetch('/api/upload-voice-note/', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showStatus('✅ Voice note saved successfully! You can now manage it in the Voice Notes section.', 'success');
+            clearRecording();
+        } else {
+            showStatus('Error: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        showStatus('Error uploading: ' + error, 'error');
+        console.error('Error:', error);
+    });
+}
+</script>
+{% endblock %}

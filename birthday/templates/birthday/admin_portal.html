@@ -1,0 +1,871 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Andile's Birthday</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        header h1 {
+            font-family: 'Pacifico', cursive;
+            color: #f5576c;
+            font-size: 2rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .logout-btn, .django-admin-btn {
+            padding: 12px 20px;
+            background: #f5576c;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .django-admin-btn {
+            background: #667eea;
+        }
+        
+        .logout-btn:hover, .django-admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 15px 25px;
+            background: white;
+            color: #f5576c;
+            border: 2px solid #f5576c;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background: #f5576c;
+            color: white;
+        }
+        
+        .tab-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #f5576c;
+            padding-bottom: 10px;
+        }
+        
+        /* Voice Recorder Styles */
+        .voice-recorder {
+            background: linear-gradient(135deg, #ffc1e3 0%, #ff8dc7 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .voice-recorder h2 {
+            border-color: white;
+            color: white;
+        }
+        
+        .recorder-controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn-record {
+            padding: 12px 24px;
+            background: white;
+            color: #ff57ab;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-record:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-record.recording {
+            background: #ff4d7a;
+            color: white;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+        }
+        
+        .audio-playback {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        
+        audio {
+            width: 100%;
+            max-width: 400px;
+            margin: 10px 0;
+        }
+        
+        .status {
+            padding: 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .status.error {
+            background: #f44336;
+            color: white;
+        }
+        
+        .status.info {
+            background: #2196f3;
+            color: white;
+        }
+        
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background: #f5576c;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-style: italic;
+        }
+        
+        .timestamp {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-played {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .badge-not-played {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .badge-downloaded {
+            background: #2196f3;
+            color: white;
+        }
+        
+        .info-box {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f5576c;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            header {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .logout-btn, .django-admin-btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                flex: 1;
+                min-width: 140px;
+            }
+            
+            .tabs {
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+            
+            .tab-btn {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+                border-radius: 8px;
+                flex: 1;
+                min-width: 100px;
+            }
+            
+            .section {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+                border-radius: 12px;
+            }
+            
+            .section h2 {
+                font-size: 1.4rem;
+                margin-bottom: 15px;
+            }
+            
+            .voice-recorder {
+                padding: 20px 15px;
+            }
+            
+            .voice-recorder h2 {
+                font-size: 1.4rem;
+            }
+            
+            .form-group label {
+                font-size: 0.95rem;
+            }
+            
+            .form-group input,
+            .form-group select {
+                max-width: 100%;
+                padding: 12px;
+                font-size: 16px;
+            }
+            
+            .btn-record {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                flex: 1;
+                min-width: 120px;
+            }
+            
+            .recorder-controls {
+                gap: 8px;
+            }
+            
+            audio {
+                max-width: 100%;
+                margin: 10px 0;
+            }
+            
+            table {
+                font-size: 0.85rem;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+            
+            .status {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+            
+            .badge {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+            
+            .info-box {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .info-box ul {
+                padding-left: 15px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.2rem;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+            }
+            
+            .logout-btn, .django-admin-btn {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .section {
+                padding: 15px 12px;
+            }
+            
+            .section h2 {
+                font-size: 1.2rem;
+            }
+            
+            .btn-record {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .recorder-controls {
+                flex-direction: column;
+            }
+            
+            table {
+                font-size: 0.75rem;
+            }
+            
+            th, td {
+                padding: 8px 5px;
+            }
+            
+            .timestamp {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💖 Admin Portal</h1>
+            <div class="header-actions">
+                <a href="/admin/" class="django-admin-btn">📊 Django Admin</a>
+                <a href="{% url 'logout_admin' %}" class="logout-btn">🚪 Logout</a>
+            </div>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('voice')">🎙️ Voice Notes</button>
+            <button class="tab-btn" onclick="switchTab('messages')">💝 Open When Messages</button>
+            <button class="tab-btn" onclick="switchTab('quiz')">🎮 Quiz Responses</button>
+            <button class="tab-btn" onclick="switchTab('open-when')">📊 Open When Stats</button>
+        </div>
+        
+        <!-- Voice Notes Tab -->
+        <div id="voice" class="tab-content active">
+            <div class="voice-recorder">
+                <h2>🎤 Record Voice Notes</h2>
+                <p style="margin-bottom: 20px;">Record heartfelt messages for each "Open When" category</p>
+                
+                <div class="form-group">
+                    <label>📝 Message Title (optional):</label>
+                    <input type="text" id="voiceTitle" placeholder="e.g., Romantic Message, Encouragement">
+                </div>
+                
+                <div class="form-group">
+                    <label>💌 Message Type:</label>
+                    <select id="messageType">
+                        <option value="">Select a category...</option>
+                        <option value="sad">😢 Open when you're sad</option>
+                        <option value="miss">💭 Open when you miss me</option>
+                        <option value="happy">😊 Open when you're happy</option>
+                        <option value="overwhelmed">😰 Open when you feel overwhelmed</option>
+                    </select>
+                </div>
+                
+                <div class="recorder-controls">
+                    <button class="btn-record" id="startBtn" onclick="startRecording()">🎤 Start Recording</button>
+                    <button class="btn-record" id="stopBtn" onclick="stopRecording()" style="display: none;">⏹️ Stop Recording</button>
+                    <button class="btn-record" onclick="clearRecording()" style="background: #ff6b9d;">🔄 Clear</button>
+                </div>
+                
+                <div id="status" class="status" style="display: none;"></div>
+                
+                <div id="audioPlayback" class="audio-playback" style="display: none;">
+                    <p style="margin: 0 0 10px 0; font-weight: bold;">🎵 Preview:</p>
+                    <audio id="audioPreview" controls></audio>
+                    <button class="btn-record" onclick="uploadRecording()" style="display: block; margin-top: 10px;">📤 Upload Voice Note</button>
+                </div>
+                
+                <div class="info-box">
+                    <strong>💡 Tips:</strong>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li>Record in a quiet place</li>
+                        <li>Keep messages 30 seconds to 2 minutes</li>
+                        <li>Speak from your heart!</li>
+                        <li>You can re-record anytime</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📁 Your Voice Notes</h2>
+                <div id="voiceNotesList" class="no-data">Loading voice notes...</div>
+            </div>
+        </div>
+        
+        <!-- Quiz Responses Tab -->
+        <div id="quiz" class="tab-content">
+            <div class="section">
+                <h2>🎮 Quiz Responses</h2>
+                {% if quiz_responses %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Question</th>
+                                <th>Answer</th>
+                                <th>Date & Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for response in quiz_responses %}
+                            <tr>
+                                <td>{{ response.question }}</td>
+                                <td><strong>{{ response.answer }}</strong></td>
+                                <td class="timestamp">{{ response.created_at|date:"M d, Y - H:i" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="no-data">No quiz responses yet. Andile hasn't played the quiz.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Open When Messages Management Tab -->
+        <div id="messages" class="tab-content">
+            <div class="section">
+                <h2>💝 Manage Open When Messages</h2>
+                <p style="margin-bottom: 30px; color: #666;">Add, edit, or customize the "Open When" messages that Andile will see.</p>
+                
+                <div style="background: rgba(255, 199, 227, 0.3); padding: 20px; border-radius: 15px; margin-bottom: 30px;">
+                    <h3>➕ Add New Message</h3>
+                    <div class="form-group">
+                        <label>💌 Message Title:</label>
+                        <input type="text" id="newTitle" placeholder="e.g., Open when you need a laugh">
+                    </div>
+                    <div class="form-group">
+                        <label>📝 Message Content:</label>
+                        <textarea id="newMessage" placeholder="Write your heartfelt message here..." style="min-height: 120px;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>😊 Emoji:</label>
+                        <input type="text" id="newEmoji" placeholder="e.g., 😂" maxlength="2" style="width: 80px;">
+                    </div>
+                    <button class="game-btn" onclick="addNewMessage()">Add Message</button>
+                </div>
+                
+                <h3>📋 Existing Messages</h3>
+                <div id="messages-list" style="display: grid; gap: 15px;"></div>
+            </div>
+        </div>
+        
+        <!-- Open When Stats Tab -->
+        <div id="open-when" class="tab-content">
+            <div class="section">
+                <h2>📊 Open When Statistics</h2>
+                {% if open_when_responses %}
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Message Type</th>
+                                <th>Voice Note Played</th>
+                                <th>Voice Note Downloaded</th>
+                                <th>Opened At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for response in open_when_responses %}
+                            <tr>
+                                <td><strong>{{ response.message_type }}</strong></td>
+                                <td>
+                                    {% if response.voice_note_played %}
+                                        <span class="badge badge-played">✓ Played</span>
+                                    {% else %}
+                                        <span class="badge badge-not-played">Not Played</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if response.voice_note_downloaded %}
+                                        <span class="badge badge-downloaded">✓ Downloaded</span>
+                                    {% else %}
+                                        <span class="badge badge-not-played">Not Downloaded</span>
+                                    {% endif %}
+                                </td>
+                                <td class="timestamp">{{ response.opened_at|date:"M d, Y - H:i" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="no-data">No "Open When" messages opened yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Tab switching
+    function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Remove active from all buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Show selected tab
+        document.getElementById(tabName).classList.add('active');
+        
+        // Highlight selected button
+        event.target.classList.add('active');
+        
+        // Load voice notes when switching to voice tab
+        if (tabName === 'voice') {
+            loadVoiceNotes();
+        }
+    }
+    
+    // Voice Recording
+    let mediaRecorder;
+    let audioChunks = [];
+    
+    async function startRecording() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            
+            mediaRecorder.ondataavailable = (event) => {
+                audioChunks.push(event.data);
+            };
+            
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                
+                document.getElementById('audioPreview').src = audioUrl;
+                document.getElementById('audioPlayback').style.display = 'block';
+                window.recordedAudioBlob = audioBlob;
+            };
+            
+            mediaRecorder.start();
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('stopBtn').style.display = 'block';
+            showStatus('Recording... 🎙️', 'info');
+        } catch (error) {
+            showStatus('Error: Microphone access denied. Please allow microphone access.', 'error');
+            console.error('Error accessing microphone:', error);
+        }
+    }
+    
+    function stopRecording() {
+        if (mediaRecorder) {
+            mediaRecorder.stop();
+            mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            document.getElementById('startBtn').style.display = 'block';
+            document.getElementById('stopBtn').style.display = 'none';
+            showStatus('Recording saved! Preview it below.', 'success');
+        }
+    }
+    
+    function clearRecording() {
+        audioChunks = [];
+        window.recordedAudioBlob = null;
+        document.getElementById('audioPlayback').style.display = 'none';
+        document.getElementById('audioPreview').src = '';
+        document.getElementById('voiceTitle').value = '';
+        showStatus('');
+    }
+    
+    function showStatus(message, type = 'info') {
+        const statusEl = document.getElementById('status');
+        if (message) {
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + type;
+            statusEl.style.display = 'block';
+        } else {
+            statusEl.style.display = 'none';
+        }
+    }
+    
+    function uploadRecording() {
+        const title = document.getElementById('voiceTitle').value || 'Voice Message';
+        const messageType = document.getElementById('messageType').value;
+        
+        if (!messageType) {
+            showStatus('Please select a message type!', 'error');
+            return;
+        }
+        
+        if (!window.recordedAudioBlob) {
+            showStatus('No recording found. Please record first.', 'error');
+            return;
+        }
+        
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('message_type', messageType);
+        formData.append('audio_file', window.recordedAudioBlob, 'voice_note.webm');
+        
+        showStatus('Uploading... 📤', 'info');
+        
+        fetch('/api/upload-voice-note/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showStatus('✅ Voice note saved successfully!', 'success');
+                clearRecording();
+                loadVoiceNotes();
+            } else {
+                showStatus('Error: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            showStatus('Error uploading: ' + error, 'error');
+            console.error('Error:', error);
+        });
+    }
+    
+    function loadVoiceNotes() {
+        fetch('/api/get-voice-notes/')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('voiceNotesList');
+                if (data.voice_notes && data.voice_notes.length > 0) {
+                    let html = '<table><thead><tr><th>Title</th><th>Category</th><th>Player</th><th>Actions</th></tr></thead><tbody>';
+                    data.voice_notes.forEach(note => {
+                        html += `
+                            <tr>
+                                <td>${note.title}</td>
+                                <td>${note.message_type || 'General'}</td>
+                                <td><audio controls style="width: 150px;"><source src="${note.audio_file}" type="audio/webm"></audio></td>
+                                <td><a href="${note.audio_file}" download class="btn-record" style="display: inline-block; text-decoration: none;">⬇️ Download</a></td>
+                            </tr>
+                        `;
+                    });
+                    html += '</tbody></table>';
+                    list.innerHTML = html;
+                } else {
+                    list.innerHTML = '<p class="no-data">No voice notes recorded yet.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading voice notes:', error);
+                document.getElementById('voiceNotesList').innerHTML = '<p class="no-data">Error loading voice notes.</p>';
+            });
+    }
+    
+    // Load and display messages
+    async function loadMessages() {
+        try {
+            const response = await fetch('/open-when/');
+            const messages = await response.json();
+            const messagesList = document.getElementById('messages-list');
+            
+            if (messages.length > 0) {
+                let html = '';
+                messages.forEach((msg, index) => {
+                    html += `
+                        <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #ff57ab; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                            <div style="display: flex; justify-content: space-between; align-items: start; gap: 15px;">
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0 0 10px 0; color: #ff57ab; font-size: 1.1rem;">${msg.emoji} ${msg.title}</h4>
+                                    <p style="margin: 0; color: #666; line-height: 1.6;">${msg.message}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                messagesList.innerHTML = html;
+            }
+        } catch (error) {
+            console.error('Error loading messages:', error);
+        }
+    }
+    
+    async function addNewMessage() {
+        const title = document.getElementById('newTitle').value;
+        const message = document.getElementById('newMessage').value;
+        const emoji = document.getElementById('newEmoji').value;
+        
+        if (!title || !message || !emoji) {
+            alert('Please fill in all fields!');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/add-message/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    title: title,
+                    message: message,
+                    emoji: emoji
+                })
+            });
+            
+            const data = await response.json();
+            if (data.status === 'success') {
+                alert('Message added successfully!');
+                document.getElementById('newTitle').value = '';
+                document.getElementById('newMessage').value = '';
+                document.getElementById('newEmoji').value = '';
+                loadMessages();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error adding message:', error);
+            alert('Error adding message!');
+        }
+    }
+    
+    // Load messages when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        loadMessages();
+    });
+    </script>
+</body>
+</html>
